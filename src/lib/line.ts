@@ -1,45 +1,43 @@
 import { writable } from "svelte/store";
-import { v4 as uuid } from "uuid";
-
-export type UUID = string;
+import { uuid, type UUID } from "./uuid";
 
 export class Line {
-    // readonly character: Character;
+    // character: Character;
     readonly id: UUID;
     readonly line: string;
 
-    constructor(id: UUID, line: string) {
-        this.id = id;
+    constructor(line: string) {
+        this.id = uuid();
         this.line = line;
     }
 }
 
 export const lineStore = writable([
-    new Line(uuid(), "What a day"),
-    new Line(uuid(), "What a day"),
-    new Line(uuid(), "What a day"),
-    new Line(uuid(), "What a day"),
-    new Line(uuid(), "What a day"),
-    new Line(uuid(), "What a day"),
-    new Line(uuid(), "What a day"),
-    new Line(uuid(), "What a day"),
-    new Line(uuid(), "What a day"),
-    new Line(uuid(), "What a day"),
-    new Line(uuid(), "What a day"),
+    new Line("What a day"),
+    new Line("What a day"),
+    new Line("What a day"),
+    new Line("What a day"),
+    new Line("What a day"),
+    new Line("What a day"),
+    new Line("What a day"),
+    new Line("What a day"),
+    new Line("What a day"),
 ]);
 
-export function addLine(line: string) {
+export function create(line: string) {
     lineStore.update((values) => {
-        const new_line_object = new Line(uuid(), line);
+        const new_line_object = new Line(line);
 
         values.push(new_line_object);
         return values;
     });
 }
 
-export function deleteLine(id: UUID) {
+export function deleteLine(lineId: UUID) {
     lineStore.update((values) => {
-        const indexOfDeletableLine = values.findIndex((line) => line.id === id);
+        const indexOfDeletableLine = values.findIndex(
+            (line) => line.id === lineId,
+        );
 
         if (indexOfDeletableLine !== -1) {
             values.splice(indexOfDeletableLine, 1);
@@ -48,3 +46,5 @@ export function deleteLine(id: UUID) {
         return values;
     });
 }
+
+export function assignCharacterToLine(characterId: UUID, lineId: UUID) {}

@@ -1,8 +1,7 @@
 <script lang="ts">
     import { tick } from "svelte";
     import LineComponent from "./lib/LineComponent.svelte";
-    ("./lib/LineComponent.svelte");
-    import { addLine, lineStore } from "./lib/line";
+    import { create, lineStore } from "./lib/line";
     import { flip } from "svelte/animate";
     import { fade } from "svelte/transition";
 
@@ -18,7 +17,7 @@
     let new_line: string = "";
 
     function handle_submit() {
-        addLine(new_line);
+        create(new_line);
 
         new_line = "";
     }

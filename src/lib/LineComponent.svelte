@@ -1,14 +1,9 @@
 <script lang="ts">
-    import { flip } from "svelte/animate";
-    import { Line, deleteLine, type UUID } from "./line";
+    import { Line, deleteLine } from "./line";
 
     export let line: Line;
 
     let hovered: boolean = false;
-
-    function deleteSelf(id: UUID) {
-        deleteLine(id);
-    }
 </script>
 
 <div
