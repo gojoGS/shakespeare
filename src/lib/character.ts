@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import type { UUID } from "./uuid";
+import { uuid, type UUID } from "./uuid";
 
 export class Character {
     readonly id: UUID;
@@ -7,6 +7,7 @@ export class Character {
     readonly color: string;
 
     constructor(name: string, color: string) {
+        this.id = uuid();
         this.color = color;
         this.name = name;
     }

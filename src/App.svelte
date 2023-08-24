@@ -4,6 +4,7 @@
     import { create, lineStore } from "./lib/line";
     import { flip } from "svelte/animate";
     import { fade } from "svelte/transition";
+    import { characterStore } from "./lib/character";
 
     let element: HTMLElement;
     let dialogue: HTMLDialogElement;
@@ -27,24 +28,18 @@
 
 <main class="shadow-xl">
     <div class="characters">
-        <div class="character avatar placeholder tooltip" data-tip="Dad">
+        {#each $characterStore as character (character.id)}
             <div
-                class="bg-neutral-focus text-neutral-content rounded-full w-12"
+                class="character avatar placeholder tooltip"
+                data-tip={character.name}
             >
-                <span class="text-3xl">D</span>
+                <div
+                    class="bg-neutral-focus text-neutral-content rounded-full w-12"
+                >
+                    <span class="text-3xl">{character.abbreviation}</span>
+                </div>
             </div>
-        </div>
-
-        <div
-            class="avatar placeholder tooltip tooltip-primary"
-            data-tip="Daughter"
-        >
-            <div
-                class="bg-primary-focus text-neutral-content rounded-full w-12"
-            >
-                <span class="text-3xl">F</span>
-            </div>
-        </div>
+        {/each}
 
         <button
             class="btn btn-circle btn-outline"
@@ -117,26 +112,20 @@
                 tabindex="-2"
                 class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
             >
-                <li>
-                    <div class="character avatar placeholder">
-                        <div
-                            class="bg-neutral-focus text-neutral-content rounded-full w-8"
-                        >
-                            <span class="text-2xl">D</span>
+                {#each $characterStore as character (character.id)}
+                    <li>
+                        <div class="character avatar placeholder">
+                            <div
+                                class="bg-neutral-focus text-neutral-content rounded-full w-8"
+                            >
+                                <span class="text-2xl"
+                                    >{character.abbreviation}</span
+                                >
+                            </div>
+                            {character.name}
                         </div>
-                        Dad
-                    </div>
-                </li>
-                <li>
-                    <div class="avatar placeholder">
-                        <div
-                            class="bg-primary-focus text-neutral-content rounded-full w-8"
-                        >
-                            <span class="text-2xl">F</span>
-                        </div>
-                        Flora
-                    </div>
-                </li>
+                    </li>
+                {/each}
             </ul>
         </div>
         <textarea bind:value={new_line} class="textarea textarea-primary" />
