@@ -6,6 +6,8 @@
     import { fade } from "svelte/transition";
 
     let element: HTMLElement;
+    let dialogue: HTMLDialogElement;
+    let color: string;
 
     $: $lineStore, scrollToBottom(element);
 
@@ -44,7 +46,10 @@
             </div>
         </div>
 
-        <button class="btn btn-circle btn-outline">
+        <button
+            class="btn btn-circle btn-outline"
+            on:click={() => dialogue.showModal()}
+        >
             <svg
                 class="h-12 w-12"
                 viewBox="0 0 24 24"
@@ -58,6 +63,32 @@
                 <line x1="5" y1="12" x2="19" y2="12" /></svg
             >
         </button>
+        <dialog bind:this={dialogue} id="my_modal_1" class="modal">
+            <form
+                method="dialog"
+                id="new-char"
+                class="modal-box min-h-min max-h-full"
+            >
+                <h3 id="hd" class="font-bold text-lg">
+                    Create a new character
+                </h3>
+                <label id="name-label" for="name">Name</label>
+                <input id="name" class="input input-bordered" type="text" />
+                <label id="color-label" for="color-picker"
+                    >Associated color</label
+                >
+                <input id="color-picker" type="color" bind:value={color} />
+                <div id="close" class="modal-action">
+                    <button
+                        class="btn btn-primary"
+                        on:click={() => {
+                            console.log(color);
+                        }}>Add</button
+                    >
+                    <button class="btn">Cancel</button>
+                </div>
+            </form>
+        </dialog>
     </div>
     <section class="dialogue" bind:this={element}>
         {#each $lineStore as line (line.id)}
@@ -183,5 +214,44 @@
 
     .character {
         cursor: pointer;
+    }
+
+    #new-char {
+        display: grid;
+        gap: 4px;
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: minmax(80px, auto);
+        grid-template-areas:
+            "hd hd"
+            "name-label name"
+            "color-label color-picker"
+            ". close";
+
+        justify-content: center;
+        align-items: center;
+    }
+
+    #hd {
+        grid-area: hd;
+    }
+
+    #name-label {
+        grid-area: name-label;
+    }
+
+    #name {
+        grid-area: name;
+    }
+
+    #color-label {
+        grid-area: color-label;
+    }
+
+    #color-picker {
+        grid-area: color-picker;
+    }
+
+    #close {
+        grid-area: close;
     }
 </style>
