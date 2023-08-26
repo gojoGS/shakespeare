@@ -9,38 +9,20 @@ function hexToRgb(hexColor: string): [number, number, number] {
 
 function relativeLuminance(rgb: [number, number, number]): number {
     const [r, g, b] = rgb.map((c) => c / 255);
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return 1 - (0.299 * r + 0.587 * g + 0.114 * b);
 }
 
-function contrastRatio(luminance1: number, luminance2: number): number {
-    return (
-        (Math.max(luminance1, luminance2) + 0.05) /
-        (Math.min(luminance1, luminance2) + 0.05)
-    );
+export function randomColor() {
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
 }
 
-export default function findContrastingTextColor(
-    backgroundHex: string,
-): [number, number, number] {
+export function findContrastingTextColor(backgroundHex: string): string {
     const backgroundRgb = hexToRgb(backgroundHex);
     const backgroundLuminance = relativeLuminance(backgroundRgb);
 
-    const targetContrastRatio = 4.5; // Adjust this as needed
-
-    // Loop to find a suitable text color
-    for (let i = 0; i <= 255; i++) {
-        const textRgb: [number, number, number] = [i, i, i];
-        const textLuminance = relativeLuminance(textRgb);
-        const currentContrast = contrastRatio(
-            backgroundLuminance,
-            textLuminance,
-        );
-
-        if (currentContrast >= targetContrastRatio) {
-            return textRgb;
-        }
+    if (backgroundLuminance < 0.5) {
+        return "#000";
+    } else {
+        return "#fff";
     }
-
-    // If no suitable color found, return a default color
-    return [0, 0, 0]; // Black
 }

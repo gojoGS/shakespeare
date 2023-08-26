@@ -4,11 +4,13 @@
     import { create, lineStore } from "./lib/line";
     import { flip } from "svelte/animate";
     import { fade } from "svelte/transition";
-    import { characterStore } from "./lib/character";
+    import { characterStore, createCharacter } from "./lib/character";
+    import { findContrastingTextColor, randomColor } from "./lib/color";
 
     let element: HTMLElement;
     let dialogue: HTMLDialogElement;
-    let color: string;
+    let color: string = randomColor();
+    let name: string;
 
     $: $lineStore, scrollToBottom(element);
 
@@ -34,7 +36,10 @@
                 data-tip={character.name}
             >
                 <div
-                    class="bg-neutral-focus text-neutral-content rounded-full w-12"
+                    style={`color: ${findContrastingTextColor(
+                        character.color,
+                    )}; background-color: ${character.color}`}
+                    class="rounded-full w-12"
                 >
                     <span class="text-3xl">{character.abbreviation}</span>
                 </div>
@@ -62,25 +67,42 @@
             <form
                 method="dialog"
                 id="new-char"
+                on:submit={() => {
+                    console.log(color);
+                    console.log(name);
+                    createCharacter(name, color);
+                }}
                 class="modal-box min-h-min max-h-full"
             >
                 <h3 id="hd" class="font-bold text-lg">
                     Create a new character
                 </h3>
                 <label id="name-label" for="name">Name</label>
-                <input id="name" class="input input-bordered" type="text" />
+                <input
+                    id="name"
+                    class="input input-bordered"
+                    type="text"
+                    minlength="1"
+                    maxlength="63"
+                    required
+                    bind:value={name}
+                />
                 <label id="color-label" for="color-picker"
                     >Associated color</label
                 >
-                <input id="color-picker" type="color" bind:value={color} />
+                <input
+                    id="color-picker"
+                    type="color"
+                    bind:value={color}
+                    required
+                />
                 <div id="close" class="modal-action">
+                    <button type="submit" class="btn btn-primary">Add</button>
                     <button
-                        class="btn btn-primary"
-                        on:click={() => {
-                            console.log(color);
-                        }}>Add</button
+                        on:click={() => dialogue.close()}
+                        type="button"
+                        class="btn">Cancel</button
                     >
-                    <button class="btn">Cancel</button>
                 </div>
             </form>
         </dialog>
@@ -116,7 +138,10 @@
                     <li>
                         <div class="character avatar placeholder">
                             <div
-                                class="bg-neutral-focus text-neutral-content rounded-full w-8"
+                                style={`color: ${findContrastingTextColor(
+                                    character.color,
+                                )}; background-color: ${character.color}`}
+                                class="rounded-full w-8"
                             >
                                 <span class="text-2xl"
                                     >{character.abbreviation}</span
