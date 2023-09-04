@@ -2,18 +2,9 @@
     import { Line, deleteLine } from "./line";
 
     export let line: Line;
-
-    let hovered: boolean = false;
 </script>
 
-<div
-    on:mouseover={() => (hovered = true)}
-    on:focus={() => (hovered = true)}
-    on:mouseout={() => (hovered = false)}
-    on:blur={() => (hovered = false)}
-    role="listitem"
-    class="cnt"
->
+<div role="listitem" class="cnt group">
     <div class="avatar placeholder">
         <div
             class="w-8 rounded-full bg-neutral-focus select-none text-neutral-content"
@@ -25,13 +16,15 @@
         <em>Dad:</em>
         {line.line}
     </div>
-    <span class={`buttons ${hovered ? "" : "hidden"}`}>
-        <button class="btn btn-neutral btn-outline btn-circle btn-xs">e</button>
+    <span
+        class={`buttons scale-0 group-hover:scale-100 transition-all duration-100`}
+    >
+        <button class="action-button btn-neutral btn-xs">e</button>
         <button
             on:click={() => {
                 deleteLine(line.id);
             }}
-            class="btn btn-error btn-outline btn-circle btn-xs">x</button
+            class="action-button btn-error btn-xs">x</button
         >
     </span>
 </div>
@@ -44,5 +37,9 @@
         display: inline-flex;
         flex-direction: row;
         max-width: fit-content;
+    }
+
+    .action-button {
+        @apply btn btn-outline btn-circle btn-xs;
     }
 </style>
