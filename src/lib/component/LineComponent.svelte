@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { Line, deleteLine } from "./line";
+    import { deleteLine, type Line } from "../store/line";
+    import { findContrastingTextColor } from "../util/color";
 
     export let line: Line;
 </script>
@@ -7,13 +8,16 @@
 <div role="listitem" class="cnt group">
     <div class="avatar placeholder">
         <div
-            class="w-8 rounded-full bg-neutral-focus select-none text-neutral-content"
+            style={`color: ${findContrastingTextColor(
+                line.character.color,
+            )}; background-color: ${line.character.color}`}
+            class="w-8 rounded-full select-none"
         >
-            <span class="text-2xl">D</span>
+            <span class="text-2xl">{line.character.abbreviation}</span>
         </div>
     </div>
     <div>
-        <em>Dad:</em>
+        <em>{line.character.name}</em>
         {line.line}
     </div>
     <span

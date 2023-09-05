@@ -1,11 +1,13 @@
 <script lang="ts">
     import { tick } from "svelte";
-    import LineComponent from "./lib/LineComponent.svelte";
-    import { create, lineStore } from "./lib/line";
     import { flip } from "svelte/animate";
     import { fade } from "svelte/transition";
-    import { characterStore, createCharacter } from "./lib/character";
-    import { findContrastingTextColor, randomColor } from "./lib/color";
+    import { characterStore } from "./lib/store/character";
+    import { findContrastingTextColor, randomColor } from "./lib/util/color";
+    import CharacterSelector from "./lib/component/CharacterSelector.svelte";
+    import { get } from "svelte/store";
+    import LineComponent from "./lib/component/LineComponent.svelte";
+    import { create, lineStore } from "./lib/store/line";
 
     let element: HTMLElement;
     let dialogue: HTMLDialogElement;
@@ -21,8 +23,12 @@
 
     let new_line: string = "";
 
+    const { characters, selectedCharacter } = characterStore;
+
     function handle_submit() {
-        create(new_line);
+        create(new_line, get(selectedCharacter));
+
+        characterStore.resetSelectedCharacter();
 
         new_line = "";
     }
@@ -30,7 +36,7 @@
 
 <main class="shadow-xl">
     <div class="characters">
-        {#each $characterStore as character (character.id)}
+        {#each $characters as character (character.id)}
             <div
                 class="character avatar placeholder tooltip"
                 data-tip={character.name}
@@ -70,7 +76,7 @@
                 on:submit={() => {
                     console.log(color);
                     console.log(name);
-                    createCharacter(name, color);
+                    characterStore.createCharacter(name, color);
                 }}
                 class="modal-box min-h-min max-h-full"
             >
@@ -115,47 +121,10 @@
         {/each}
     </section>
     <div class="new-line">
-        <div class="self-center dropdown dropdown-top">
-            <label tabindex="-1" class="btn m-1 btn-circle btn-outline">
-                <svg
-                    class="h-12 w-12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" /></svg
-                >
-            </label>
-            <ul
-                tabindex="-2"
-                class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-            >
-                {#each $characterStore as character (character.id)}
-                    <li>
-                        <div class="character avatar placeholder">
-                            <div
-                                style={`color: ${findContrastingTextColor(
-                                    character.color,
-                                )}; background-color: ${character.color}`}
-                                class="rounded-full w-8"
-                            >
-                                <span class="text-2xl"
-                                    >{character.abbreviation}</span
-                                >
-                            </div>
-                            {character.name}
-                        </div>
-                    </li>
-                {/each}
-            </ul>
-        </div>
+        <CharacterSelector />
         <textarea bind:value={new_line} class="textarea textarea-primary" />
         <button
-            disabled={new_line.length === 0}
+            disabled={new_line.length === 0 || $selectedCharacter === undefined}
             on:click={handle_submit}
             class="btn btn-outline btn-primary"
         >
@@ -172,6 +141,7 @@
                 <line x1="5" y1="12" x2="19" y2="12" /></svg
             >
         </button>
+        <button class="btn btn-outline btn-neutral">Reset</button>
     </div>
 </main>
 
